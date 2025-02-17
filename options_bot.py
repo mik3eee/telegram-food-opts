@@ -15,6 +15,11 @@ web_app = Flask(__name__)
 def index():
     return "Bot is alive!"
 
+# Pridaný health check endpoint
+@web_app.route("/health")
+def health():
+    return "OK", 200
+
 def run_flask():
     port = int(os.environ.get("PORT", 5000))
     web_app.run(host="0.0.0.0", port=port)
@@ -61,9 +66,6 @@ async def main_async():
     
     # Spustenie bota v režime polling
     await app_bot.run_polling()
-
-  # Spustenie polling, ale s parametr close_loop=False, aby sa event loop neuzavrel
-    await app_bot.run_polling(close_loop=False)
 
 if __name__ == "__main__":
     # Spustíme Flask server v samostatnom vlákne

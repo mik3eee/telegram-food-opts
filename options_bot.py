@@ -1,5 +1,6 @@
 import os
 import threading
+import asyncio
 from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
@@ -21,7 +22,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 # Špeciálny handler pre ".."
 async def special_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    # Tu môžeš napríklad poslať inline klávesnicu alebo inú odpoveď
     keyboard = [
         [InlineKeyboardButton("zápis", switch_inline_query_current_chat="zápis: ")],
         [InlineKeyboardButton("dopyt", switch_inline_query_current_chat="dopyt: ")]
@@ -33,25 +33,30 @@ async def special_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Dostal som správu: {update.message.text}")
 
-def run_bot():
+async def main_async():
     token = os.environ.get("TOKEN")
     if not token:
         raise ValueError("Env premenná TOKEN nie je nastavená.")
     
     app_bot = Application.builder().token(token).build()
 
-    # Pridaj handler pre príkaz /start
+    # Pridaj handlery – špeciálny handler musí byť pridaný pred generickým
     app_bot.add_handler(CommandHandler("start", start))
-    # Pridaj špeciálny handler, ktorý zachytí správy presne obsahujúce ".."
     app_bot.add_handler(MessageHandler(filters.Regex(r"^\.\.$"), special_command))
-    # Pridaj generický handler pre všetky ostatné textové správy
     app_bot.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
     print("Bot beží...")
-    app_bot.run_polling()
 
-# 3) Spúšťací kód
+    # Zruš akýkoľvek existujúci webhook, aby polling mohol fungovať
+    await app_bot.bot.delete_webhook(drop_pending_updates=True)
+    
+    # Spustenie bota v režime polling
+    await app_bot.run_polling()
+
 if __name__ == "__main__":
+    # Spustíme Flask server v samostatnom vlákne
     flask_thread = threading.Thread(target=run_flask)
     flask_thread.start()
-    run_bot()
+
+    # Spustíme asynchrónnu hlavnú funkciu pre bota
+    asyncio.run(main_async())

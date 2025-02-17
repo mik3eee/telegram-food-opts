@@ -1,9 +1,12 @@
 import os
 import threading
 import asyncio
+import nest_asyncio
 from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+
+nest_asyncio.apply()  # Umožní vnorený event loop
 
 # 1) Flask aplikácia – pre health check
 web_app = Flask(__name__)
@@ -48,7 +51,7 @@ async def main_async():
 
     # Pridaj handlery – špeciálny handler musí byť pridaný pred generickým
     app_bot.add_handler(CommandHandler("start", start))
-    app_bot.add_handler(MessageHandler(filters.Regex(r"^\.\.$"), special_command))
+    app_bot.add_handler(MessageHandler(filters.Regex(r"^[qQ]$"), special_command))
     app_bot.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
     print("Bot beží...")

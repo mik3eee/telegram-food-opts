@@ -23,8 +23,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 # Špeciálny handler pre ".."
 async def special_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
-        [InlineKeyboardButton("zápis", switch_inline_query_current_chat="zápis: ")],
-        [InlineKeyboardButton("dopyt", switch_inline_query_current_chat="dopyt: ")]
+        [
+            InlineKeyboardButton("📝 zápis", switch_inline_query_current_chat="zápis: "),
+            InlineKeyboardButton("❓ dopyt", switch_inline_query_current_chat="dopyt: ")
+        ],
+        [
+            InlineKeyboardButton("💡 návrh", switch_inline_query_current_chat="návrh: "),
+            InlineKeyboardButton("📊 report", switch_inline_query_current_chat="report: ")
+        ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text("Vyberte možnosť:", reply_markup=reply_markup)

@@ -1,7 +1,11 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
 
-os.environ["TOKEN"]
+import os
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
+
+def main():
+    TOKEN = os.environ["TOKEN"]  # Teraz bude fungovať
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [

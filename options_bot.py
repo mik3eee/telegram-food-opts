@@ -62,6 +62,9 @@ async def main_async():
     # Spustenie bota v režime polling
     await app_bot.run_polling()
 
+  # Spustenie polling, ale s parametr close_loop=False, aby sa event loop neuzavrel
+    await app_bot.run_polling(close_loop=False)
+
 if __name__ == "__main__":
     # Spustíme Flask server v samostatnom vlákne
     flask_thread = threading.Thread(target=run_flask)

@@ -2,10 +2,13 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
 
 import os
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 def main():
-    TOKEN = os.environ["TOKEN"]  # Teraz bude fungovať
+    TOKEN = os.environ["TOKEN"]  # Definovanie premennej TOKEN
+    app = Application.builder().token(TOKEN).build()
+    # Pridajte handlery, atď.
+    app.run_polling()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
